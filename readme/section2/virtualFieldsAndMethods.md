@@ -1,3 +1,9 @@
+# npm install
+
+```bash
+$ npm i uuid
+```
+
 # models folder
 
 ```bash
