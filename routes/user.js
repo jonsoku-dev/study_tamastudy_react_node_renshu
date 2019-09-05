@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
 // controllers
-const { signup, signin, signout } = require("../controllers/user");
+const { signup, signin, signout, requireSignin } = require("../controllers/user");
 //const { userSignupValidator } = require("../validator");
 
 router.post(
@@ -29,5 +29,10 @@ router.post(
 
 router.post("/signin", signin);
 router.get("/signout", signout);
+
+// how to use middleware (example)
+router.get("/hello", requireSignin, (req, res) => {
+  res.send("hello there");
+});
 
 module.exports = router;
