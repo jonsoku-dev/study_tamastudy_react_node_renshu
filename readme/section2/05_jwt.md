@@ -1,43 +1,45 @@
-const User = require("../models/user");
-const { errorHandler } = require("../helpers/dbErrorHandler");
-const { validationResult } = require("express-validator");
-const jwt = require("jsonwebtoken"); // to generate signed token
-const expressJwt = require("express-jwt"); // for authorization check
+# npm install
 
-exports.signup = async (req, res) => {
-  /* validator */
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-  const { name, email, password } = req.body;
-  try {
-    let user = await User.findOne({ email });
-    // user check
-    if (user) {
-      return res.status(400).json({ errors: [{ msg: "user already exists!" }] });
-    }
-    user = new User({
-      name,
-      email,
-      password
-    });
-    // save user
-    await user.save((err, user) => {
-      if (err) {
-        return res.status(400).json({
-          err: errorHandler(err)
-        });
-      }
-      user.salt = undefined;
-      user.hashed_password = undefined;
-      res.json({ user });
-    });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server error!");
-  }
+```bash
+$ npm i express-jwt jsonwebtoken
+```
+
+# routes/user.js
+
+```javascript
+...
+
+router.post("/signin", signin);
+router.get("/signout", signout);
+
+module.exports = router;
+
+```
+
+# models/user.js
+
+```javascript
+...
+
+userSchema.methods = {
+  authenticate: function(plainText) {
+    //true or false
+    return this.encryptPassword(plainText) === this.hashed_password;
+  },
+
+  ...
+
 };
+
+module.exports = mongoose.model("User", userSchema);
+
+```
+
+# controllers/user.js
+
+```javascript
+
+...
 
 exports.signin = async (req, res) => {
   //find the user based on email
@@ -70,3 +72,5 @@ exports.signout = async (req, res) => {
   res.clearCookie("t");
   res.json({ message: "Signout success!" });
 };
+
+```
