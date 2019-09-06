@@ -5,7 +5,6 @@ exports.requireSignin = expressJwt({
   userProperty: "auth"
 });
 
-// 자기 프로필만 볼 수 있도록! 예를들어 /api/secret/:userId 부분..
 exports.isAuth = (req, res, next) => {
   let user = req.profile && req.auth && req.profile._id == req.auth._id;
   if (!user) {
