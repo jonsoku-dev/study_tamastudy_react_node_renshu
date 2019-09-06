@@ -1,10 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const { create } = require("../controllers/category");
 const { requireSignin, isAuth, isAdmin } = require("../middleware/auth");
-const { userById, getSecretProfile } = require("../controllers/user");
-
-// :userId => route.param("userId", userById)
-router.get("/secret/:userId", requireSignin, isAuth, isAdmin, getSecretProfile);
+const { userById } = require("../controllers/user");
+router.post("/category/create/:userId", requireSignin, isAuth, isAdmin, create);
 
 router.param("userId", userById);
 
